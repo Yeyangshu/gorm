@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-// CallbackContext
+// CallbackContext callback上下文测试
 type CallbackContext struct {
 }
 
@@ -20,5 +20,11 @@ func (e *CallbackContext) Initialize(db *gorm.DB) error {
 func getContext(db *gorm.DB) {
 	ctx := db.Statement.Context
 	value := ctx.Value("context")
-	log.Println("callback_context get value：", value)
+	log.Printf("callback_context get context value: %s", value)
+
+	// 获取gorm设置值
+	setKey, ok := db.Get("setKey")
+	if ok {
+		log.Printf("callback_context get set value: %t", setKey)
+	}
 }

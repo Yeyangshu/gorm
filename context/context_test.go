@@ -35,7 +35,7 @@ func TestContinuousSessionMode(t *testing.T) {
 	log.Println(user)
 }
 
-// context超时
+// context超时，参考Chi 中间件示例：https://gorm.io/zh_CN/docs/context.html#Chi-%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%A4%BA%E4%BE%8B
 func TestContextTimeout(t *testing.T) {
 	db := config.DB
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -72,12 +72,17 @@ func TestContextInHookOrCallback(t *testing.T) {
 	db := config.DB
 	db.Use(&callback.CallbackContext{})
 
+	// gorm设置值，可传递到钩子
+	db = db.Set("setKey", true)
+
 	ctx := context.WithValue(context.Background(), "context", "123")
 	user := model.User{ID: 1}
 	// SELECT * FROM `users` WHERE `users`.`id` = 1
 	db.WithContext(ctx).Find(&user)
 
 	//=== RUN   TestContextInHookOrCallback
+	//2023/04/19 07:03:54 hook_context get value: 123
+
 	//2023/04/18 22:44:24 callback_context get value： 123
 	//
 	//2023/04/18 22:44:24 D:/gorm/context/context_test.go:78
